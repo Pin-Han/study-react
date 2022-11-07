@@ -1,48 +1,33 @@
-import { Fragment, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { Route, Switch } from "react-router-dom";
 
-import Cart from "./components/Cart/Cart";
-import Layout from "./components/Layout/Layout";
-import Products from "./components/Shop/Products";
-import Notification from "./components/UI/Notification";
-import { sendCartData, fetchCartData } from "./store/cart-actions";
-
-let isInitial = true;
+import Welcome from "./pages/Welcome";
+import Products from "./pages/Products";
+import ProductDetail from "./pages/ProductDetail";
+import MainHeader from "./components/MainHeader";
 
 function App() {
-  const dispatch = useDispatch();
-  const showCart = useSelector((state) => state.ui.cartIsVisible);
-  const cart = useSelector((state) => state.cart);
-  const notification = useSelector((state) => state.ui.notification);
-
-  useEffect(() => {
-    dispatch(fetchCartData());
-  }, [dispatch]);
-  useEffect(() => {
-    if (isInitial) {
-      isInitial = false;
-      return;
-    }
-    if (cart.changed) {
-      dispatch(sendCartData(cart));
-    }
-  }, [cart, dispatch]);
-
   return (
-    <Fragment>
-      {notification && (
-        <Notification
-          status={notification.status}
-          title={notification.title}
-          message={notification.message}
-        />
-      )}
-      <Layout>
-        {showCart && <Cart />}
-        <Products />
-      </Layout>
-    </Fragment>
+    <div>
+      <MainHeader />
+      <main>
+        <Switch>
+          <Route path="/welcome">
+            <Welcome />
+          </Route>
+          <Route path="/products" exact>
+            <Products />
+          </Route>
+          <Route path="/products/:productId">
+            <ProductDetail />
+          </Route>
+        </Switch>
+      </main>
+    </div>
   );
 }
 
 export default App;
+
+// our-domain.com/welcome => Welcome Component
+// our-domain.com/products => Products Component
+// our-domain.com/product-detail/a-book
